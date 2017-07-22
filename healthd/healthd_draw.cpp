@@ -25,10 +25,28 @@ using namespace android;
 
 #define LOGE(x...) KLOG_ERROR("charger", x);
 #define LOGV(x...) KLOG_DEBUG("charger", x);
+#define LOGW(x...) KLOG_WARNING("charger", x);
+
+static const GRFont* gr_font = NULL;
+
+static const GRFont* get_font()
+{
+    return gr_font;
+}
 
 HealthdDraw::HealthdDraw(animation* anim)
   : kSplitScreen(HEALTHD_DRAW_SPLIT_SCREEN),
     kSplitOffset(HEALTHD_DRAW_SPLIT_OFFSET) {
+
+  GRFont* tmp_font;
+  int font_res = gr_init_font("charger_font", &tmp_font);
+  if (font_res == 0) {
+      gr_font = tmp_font;
+  } else {
+      LOGW("Couldn't open font, falling back to default!\n");
+      gr_font = gr_sys_font();
+  }
+
   gr_init();
   gr_font_size(gr_sys_font(), &char_width_, &char_height_);
 
@@ -174,7 +192,7 @@ void HealthdDraw::draw_percent(const animation* anim) {
     }
 
     snprintf(cap_str, (5), "%d%%", cur_level);
-    str_len_px = gr_measure(gr_sys_font(), cap_str);
+    str_len_px = gr_measure(get_font(), cap_str);
     x = (gr_fb_width() - str_len_px) / 2;
     // draw it below the battery image
     y = (gr_fb_height() + batt_height) / 2 + char_height_ * 2;
@@ -189,7 +207,7 @@ void HealthdDraw::draw_percent(const animation* anim) {
       gr_color(0, 255, 0, 255); // green
     }
 
-    draw_text(gr_sys_font(), x, y, cap_str);
+    draw_text(get_font(), x, y, cap_str);
 
   } else {
     std::string str = base::StringPrintf("%d%%", cur_level);

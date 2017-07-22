@@ -190,6 +190,14 @@ LOCAL_POST_INSTALL_CMD := $(hide) mkdir -p $(TARGET_ROOT_OUT) \
 include $(BUILD_EXECUTABLE)
 
 ifneq ($(strip $(LOCAL_CHARGER_NO_UI)),true)
+include $(CLEAR_VARS)
+LOCAL_MODULE := charger_font.png
+LOCAL_SRC_FILES := fonts/$(healthd_density)/charger_font.png
+LOCAL_MODULE_TAGS := optional
+LOCAL_MODULE_CLASS := ETC
+LOCAL_MODULE_PATH := $(TARGET_ROOT_OUT)/res/images
+include $(BUILD_PREBUILT)
+
 define _add-charger-image
 include $$(CLEAR_VARS)
 LOCAL_MODULE := system_core_charger_res_images_$(notdir $(1))
