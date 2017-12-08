@@ -104,6 +104,9 @@ LOCAL_EXPORT_C_INCLUDE_DIRS := $(LOCAL_PATH)/include
 LOCAL_STATIC_LIBRARIES := \
     libbase
 
+LOCAL_WHOLE_STATIC_LIBRARIES := \
+    libcutils
+
 include $(BUILD_STATIC_LIBRARY)
 
 ### charger ###
