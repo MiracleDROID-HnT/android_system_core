@@ -2,6 +2,20 @@
 
 LOCAL_PATH := $(call my-dir)
 
+# Set healthd_density to the density bucket of the device.
+healthd_density := unknown
+ifneq (,$(TARGET_RECOVERY_DENSITY))
+healthd_density := $(filter %dpi,$(TARGET_RECOVERY_DENSITY))
+else
+ifneq (,$(PRODUCT_AAPT_PREF_CONFIG))
+# If PRODUCT_AAPT_PREF_CONFIG includes a dpi bucket, then use that value.
+healthd_density := $(filter %dpi,$(PRODUCT_AAPT_PREF_CONFIG))
+else
+# Otherwise, use the default medium density.
+healthd_density := mdpi
+endif
+endif
+
 include $(CLEAR_VARS)
 LOCAL_SRC_FILES := BatteryMonitor.cpp
 LOCAL_MODULE := libbatterymonitor
@@ -195,8 +209,13 @@ else
 IMAGES_DIR := ../../../$(BOARD_HEALTHD_CUSTOM_CHARGER_RES)
 endif
 _images :=
+ifeq ($(strip $(BOARD_HEALTHD_CUSTOM_CHARGER_RES)),)
+$(foreach _img, $(call find-subdir-subdir-files, "$(IMAGES_DIR)/$(healthd_density)", "*.png"), \
+  $(eval $(call _add-charger-image,$(_img))))
+else
 $(foreach _img, $(call find-subdir-subdir-files, "$(IMAGES_DIR)", "*.png"), \
   $(eval $(call _add-charger-image,$(_img))))
+endif
 
 include $(CLEAR_VARS)
 LOCAL_MODULE := charger_res_images
