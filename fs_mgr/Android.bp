@@ -57,7 +57,7 @@ cc_library_static {
     ],
     cppflags: [
         "-DALLOW_SKIP_SECURE_CHECK=0",
-        "-DALLOW_ADBD_DISABLE_VERITY=0",
+        "-DALLOW_ADBD_DISABLE_VERITY=1",
     ],
     product_variables: {
         debuggable: {

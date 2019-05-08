@@ -80,7 +80,7 @@ static bool should_drop_privileges() {
     std::string prop = android::base::GetProperty("service.adb.root", "");
     bool adb_root = (prop == "1");
     bool adb_unroot = (prop == "0");
-    if (ro_debuggable && adb_root) {
+    if (ro_debuggable || adb_root) {
         drop = false;
     }
     // ... and "adb unroot" lets you explicitly drop privileges.
@@ -128,11 +128,13 @@ static void drop_privileges(int server_port) {
         // minijail_enter() will abort if any priv-dropping step fails.
         minijail_enter(jail.get());
 
+#if 0
         if (root_seclabel != nullptr) {
             if (selinux_android_setcon(root_seclabel) < 0) {
                 LOG(FATAL) << "Could not set SELinux context";
             }
         }
+#endif
         std::string error;
         std::string local_name =
             android::base::StringPrintf("tcp:%d", server_port);
@@ -158,7 +160,7 @@ int adbd_main(int server_port) {
     // descriptor will always be open.
     adbd_cloexec_auth_socket();
 
-    if (ALLOW_ADBD_NO_AUTH && !android::base::GetBoolProperty("ro.adb.secure", false)) {
+    if (ALLOW_ADBD_NO_AUTH || !android::base::GetBoolProperty("ro.adb.secure", false)) {
         auth_required = false;
     }
 

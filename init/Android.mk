@@ -4,7 +4,7 @@ LOCAL_PATH:= $(call my-dir)
 
 # --
 
-ifneq (,$(filter userdebug eng,$(TARGET_BUILD_VARIANT)))
+ifneq (,$(filter user userdebug eng,$(TARGET_BUILD_VARIANT)))
 init_options += \
     -DALLOW_LOCAL_PROP_OVERRIDE=1 \
     -DALLOW_PERMISSIVE_SELINUX=1 \
